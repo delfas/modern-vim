@@ -1554,6 +1554,7 @@ cmap jj <esc>
 
 " I like jj - Let's try something else fun
 imap ,fn <c-r>=expand('%:t:r')<cr>
+
 " Add a GUID to the current line
 imap <C-J>d <C-r>=substitute(system("uuidgen"), '.$', '', 'g')<CR>
 
