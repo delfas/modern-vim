@@ -180,6 +180,11 @@
     command! PackClean call minpac#clean()
 
     " General {
+        if count(g:spf13_bundle_groups, 'ctrlp')
+            call minpac#add('ctrlpvim/ctrlp.vim')
+            call minpac#add('tacahiroy/ctrlp-funky')
+        endif
+
         if count(g:spf13_bundle_groups, 'general')
             call minpac#add('scrooloose/nerdtree')
             call minpac#add('altercation/vim-colors-solarized')
@@ -192,8 +197,6 @@
             call minpac#add('junegunn/fzf.vim')
             call minpac#add('mileszs/ack.vim')
             call minpac#add('junegunn/seoul256.vim')
-            call minpac#add('ctrlpvim/ctrlp.vim')
-            call minpac#add('tacahiroy/ctrlp-funky')
             call minpac#add('terryma/vim-multiple-cursors')
             call minpac#add('vim-scripts/sessionman.vim')
             call minpac#add('vim-scripts/matchit.zip')
@@ -965,7 +968,7 @@
 
     "
     " ctrlp {
-        if isdirectory(expand("~/.vim/pack/minpac/start/ctrlp.vim/"))
+        if count(g:spf13_bundle_groups, 'ctrlp') && isdirectory(expand("~/.vim/pack/minpac/start/ctrlp.vim/"))
             let g:ctrlp_regexp = 1
             let g:ctrlp_switch_buffer = 'E'
             let g:ctrlp_tabpage_position = 'c'
@@ -2010,7 +2013,7 @@ function! MaybeRunBranchSwitch()
       endif
       if thisbranch != thatbranch
         call UpdateThatBranch(root)
-        CtrlPClearCache
+        "CtrlPClearCache
       endif
     endif
   endif
