@@ -15,7 +15,7 @@
     " Basics {
         set nocompatible        " Must be first line
         if !WINDOWS()
-            set shell=/bin/sh
+            set shell=/bin/bash
         else
           set shell=bash
           set shellslash
@@ -166,6 +166,16 @@
                 \ ]
         endif
     " }
+
+    if has('nvim')
+      tnoremap <Esc> <C-\><C-n>
+      tnoremap <C-v><Esc> <Esc>
+    endif
+
+    if has('nvim')
+      highlight! link TermCursor Cursor
+      highlight! TermCursorNC guibg=red guifg=white ctermbg=1 ctermfg=15
+    endif
 " }
 "
 " minpac {
