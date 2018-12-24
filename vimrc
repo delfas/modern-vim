@@ -176,10 +176,27 @@
       highlight! link TermCursor Cursor
       highlight! TermCursorNC guibg=red guifg=white ctermbg=1 ctermfg=15
     endif
+
+    " window switching normal mode
+    nnoremap <M-h> <c-w>h
+    nnoremap <M-j> <c-w>j
+    nnoremap <M-k> <c-w>k
+    nnoremap <M-l> <c-w>l
+    if has('nvim') "window switching in terminal mode
+      tnoremap <M-h> <c-\><c-n><c-w>h
+      tnoremap <M-j> <c-\><c-n><c-w>j
+      tnoremap <M-k> <c-\><c-n><c-w>k
+      tnoremap <M-l> <c-\><c-n><c-w>l
+    endif
+
+    " window switching in insert mode
+    "
+    "
+    " window switching in visual mode
 " }
 "
 " minpac {
-    let g:spf13_bundle_groups=['general', 'programming', 'ruby', 'javascript', 'html', 'misc', 'writing', 'youcompleteme', 'deoplete',]
+    let g:spf13_bundle_groups=['general', 'programming', 'ruby', 'javascript', 'typescript', 'html', 'misc', 'writing', 'youcompleteme', 'deoplete',]
 "
     packadd minpac
     call minpac#init()
@@ -188,6 +205,11 @@
 
     command! PackUpdate call minpac#update()
     command! PackClean call minpac#clean()
+
+    " Vim Dispatch {
+        call minpac#add('tpope/vim-dispatch')
+        call minpac#add('radenling/vim-dispatch-neovim')
+    " }
 
     " General {
         if count(g:spf13_bundle_groups, 'ctrlp')
@@ -315,6 +337,13 @@
         endif
     " }
 
+    " Typescript {
+        if count(g:spf13_bundle_groups, 'typescript')
+            call minpac#add('leafgarland/typescript-vim')
+        endif
+    " }
+    "
+    "
     " Javascript {
         if count(g:spf13_bundle_groups, 'javascript')
             call minpac#add('elzr/vim-json')
@@ -903,7 +932,7 @@
 
     " NerdTree {
         if isdirectory(expand("~/.vim/pack/minpac/start/nerdtree"))
-            map <C-e> <plug>NERDTreeTabsToggle<CR>
+            "map <C-e> <plug>NERDTreeTabsToggle<CR>
             map <leader>e :NERDTreeFind<CR>
             nmap <leader>nt :NERDTreeFind<CR>
 
