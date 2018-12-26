@@ -182,6 +182,7 @@
     nnoremap <M-j> <c-w>j
     nnoremap <M-k> <c-w>k
     nnoremap <M-l> <c-w>l
+
     if has('nvim') "window switching in terminal mode
       tnoremap <M-h> <c-\><c-n><c-w>h
       tnoremap <M-j> <c-\><c-n><c-w>j
@@ -190,9 +191,17 @@
     endif
 
     " window switching in insert mode
+    inoremap <M-h> <c-w>h
+    inoremap <M-j> <c-w>j
+    inoremap <M-k> <c-w>k
+    inoremap <M-l> <c-w>l
     "
     "
     " window switching in visual mode
+    vnoremap <M-h> <c-w>h
+    vnoremap <M-j> <c-w>j
+    vnoremap <M-k> <c-w>k
+    vnoremap <M-l> <c-w>l
 " }
 "
 " minpac {
