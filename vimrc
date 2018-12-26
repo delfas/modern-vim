@@ -191,10 +191,10 @@
     endif
 
     " window switching in insert mode
-    inoremap <M-h> <c-w>h
-    inoremap <M-j> <c-w>j
-    inoremap <M-k> <c-w>k
-    inoremap <M-l> <c-w>l
+    inoremap <M-h> <esc><c-w>h
+    inoremap <M-j> <esc><c-w>j
+    inoremap <M-k> <esc><c-w>k
+    inoremap <M-l> <esc><c-w>l
     "
     "
     " window switching in visual mode
