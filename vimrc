@@ -95,8 +95,6 @@
     "set mouse=a                 " Automatically enable mouse usage
     set mousehide               " Hide the mouse cursor while typing
 
-
-
     if has('clipboard')
         " Add the unnamed register to the clipboard
         set clipboard+=unnamed
@@ -218,6 +216,9 @@
     " Vim Dispatch {
         call minpac#add('tpope/vim-dispatch')
         call minpac#add('radenling/vim-dispatch-neovim')
+    " }
+    " Grepper {
+        call minpac#add('mhinz/vim-grepper')
     " }
 
     " General {
@@ -825,6 +826,24 @@
 "
 " Plugins {
     "
+    " Grepper {
+       let g:grepper = {}
+       let g:grepper.tools = ['grep', 'git', 'rg']
+       " Search for the current word
+       nnoremap <Leader>* :Grepper -cword -noprompt<CR>
+
+       " Search for the current selection
+       nmap gs <plug>(GrepperOperator)
+       xmap gs <plug>(GrepperOperator)
+       function! SetupCommandAlias(input, output)
+         exec 'cabbrev <expr> '.a:input
+               \ .' ((getcmdtype() is# ":" && getcmdline() is# "'.a:input.'")'
+               \ .'? ("'.a:output.'") : ("'.a:input.'"))'
+       endfunction
+
+       call SetupCommandAlias("grep", "GrepperGrep")
+    "
+    " }
     " GoLang {
         if count(g:spf13_bundle_groups, 'go')
             let g:go_highlight_functions = 1
