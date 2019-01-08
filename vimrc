@@ -842,6 +842,10 @@
        endfunction
 
        call SetupCommandAlias("grep", "GrepperGrep")
+
+       " Open Grepper-prompt for a particular grep-alike tool
+       nnoremap <Leader>g :Grepper -tool git<CR>
+       nnoremap <Leader>G :Grepper -tool rg<CR>
     "
     " }
     " GoLang {
@@ -2220,6 +2224,11 @@ command! -complete=command -nargs=+ RedirToYankRegister
 "
 "Format JSON
 com! FormatJSON %!python -m json.tool
+"
+"Format XML
+com! FormatXML :%!python -c "import xml.dom.minidom, sys; print(xml.dom.minidom.parse(sys.stdin).toprettyxml())"
+nnoremap = :FormatXML<Cr>
+
 
 "-----------------------------------------------------------------------------
 " Auto commands
