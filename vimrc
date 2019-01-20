@@ -284,7 +284,7 @@
             call minpac#add('scrooloose/syntastic')
             call minpac#add('tpope/vim-fugitive')
             call minpac#add('tpope/vim-rhubarb')
-            call minpac#add('tommcdo/vim-fubitive')
+            call minpac#add('delfas/vim-fubitive')
             call minpac#add('mattn/webapi-vim')
             call minpac#add('mattn/gist-vim')
             call minpac#add('scrooloose/nerdcommenter')
