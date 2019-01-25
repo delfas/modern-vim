@@ -1185,6 +1185,7 @@
     "
     " deoplete {
         if count(g:spf13_bundle_groups, 'deoplete')
+
             let g:deoplete#enable_at_startup = 1
             let g:python3_host_prog = 'python3'
             let g:python_host_prog = 'python'
@@ -1299,6 +1300,8 @@
             let g:deoplete#sources#omni#input_patterns.c = '[^.[:digit:] *\t]\%(\.\|->\)'
             let g:deoplete#sources#omni#input_patterns.cpp = '[^.[:digit:] *\t]\%(\.\|->\)\|\h\w*::'
             let g:deoplete#sources#omni#input_patterns.ruby = '[^. *\t]\.\h\w*\|\h\w*::'
+
+            " call deoplete#custom#option('sources', {'cs': ['omnisharp'], })
     " }
     " neocomplete {
         elseif count(g:spf13_bundle_groups, 'neocomplete')
@@ -1419,6 +1422,7 @@
     "   let g:spf13_no_omni_complete = 1
         elseif !exists('g:spf13_no_omni_complete')
             " Enable omni-completion.
+            autocmd FileType cs setlocal omnifunc=OmniSharp#Complete
             autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
             autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
             autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
