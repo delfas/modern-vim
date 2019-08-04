@@ -220,6 +220,11 @@
     " Grepper {
         call minpac#add('mhinz/vim-grepper')
     " }
+    " Vim Markdown {
+        call minpac#add('godlygeek/tabular')
+        call minpac#add('plasticboy/vim-markdown')
+        call minpac#add('iamcco/markdown-preview.nvim', { 'do': 'cd app & yarn install' })
+    " }
 
     " General {
         if count(g:spf13_bundle_groups, 'ctrlp')
@@ -275,6 +280,12 @@
             call minpac#add('reedes/vim-textobj-sentence')
             call minpac#add('reedes/vim-textobj-quote')
             call minpac#add('reedes/vim-wordy')
+
+            " Dim paragraphs above and below the active paragraph.
+            call minpac#add('junegunn/limelight.vim')
+
+            " Distraction free writing by removing UI elements and centering everything.
+            call minpac#add('junegunn/goyo.vim')
         endif
     " }
 
@@ -288,6 +299,7 @@
             call minpac#add('mattn/webapi-vim')
             call minpac#add('mattn/gist-vim')
             call minpac#add('scrooloose/nerdcommenter')
+            " Toggle comments in various ways
             call minpac#add('tpope/vim-commentary')
             call minpac#add('godlygeek/tabular')
             call minpac#add('luochen1990/rainbow')
@@ -296,7 +308,28 @@
                 call minpac#add('majutsushi/tagbar')
             endif
             call minpac#add('ludovicchabant/vim-gutentags')
-        endif
+
+            " Modify * to also work with visual selections.
+            call minpac#add('nelstrom/vim-visual-star-search')
+
+            " Automatically clear search highlights after you move your cursor.
+            call minpac#add('haya14busa/is.vim')
+
+            " Launch Ranger from Vim.
+            call minpac#add('francoiscabrol/ranger.vim')
+
+            " Run a diff on 2 directories.
+            call minpac#add('will133/vim-dirdiff')
+
+            " Better display unwanted whitespace.
+            call minpac#add('ntpeters/vim-better-whitespace')
+
+            " Drastically improve insert mode performance in files with folds.
+            call minpac#add('Konfekt/FastFold')
+
+            " Run test suites for various languages.
+            call minpac#add('janko/vim-test')
+          endif
     " }
 
     " Snippets & AutoComplete {
@@ -974,8 +1007,12 @@
             let NERDTreeQuitOnOpen=1
             let NERDTreeMouseMode=2
             let NERDTreeShowHidden=1
+            let g:NERDTreeAutoDeleteBuffer=1
             let NERDTreeKeepTreeInNewTab=1
             let g:nerdtree_tabs_open_on_gui_startup=0
+
+            " Open nerd tree at the current file or close nerd tree if pressed again.
+            nnoremap <silent> <expr> <Leader>n g:NERDTree.IsOpen() ? "\:NERDTreeClose<CR>" : bufexists(expand('%')) ? "\:NERDTreeFind<CR>" : "\:NERDTree<CR>"
         endif
     " }
 
