@@ -223,7 +223,9 @@
     " Vim Markdown {
         call minpac#add('godlygeek/tabular')
         call minpac#add('plasticboy/vim-markdown')
-        call minpac#add('iamcco/markdown-preview.nvim', { 'do': 'cd app & yarn install' })
+        " call minpac#add('iamcco/markdown-preview.nvim', { 'do': 'cd app & yarn install' })
+        call minpac#add('iamcco/markdown-preview.nvim', {'on_ft': ['markdown', 'pandoc.markdown', 'rmd'],
+              \ 'build': 'cd app & yarn install' })
     " }
 
     " General {
@@ -265,6 +267,8 @@
             if !exists('g:spf13_no_views')
                 call minpac#add('vim-scripts/restore_view.vim')
             endif
+            " Automatically set 'shiftwidth' + 'expandtab' (indention) based on file type.
+            call minpac#add('tpope/vim-sleuth')
             call minpac#add('mhinz/vim-signify')
             call minpac#add('tpope/vim-abolish')
             call minpac#add('osyo-manga/vim-over')
@@ -616,6 +620,7 @@
       endif
     endif
     :nohls
+
 " }
 
 " Formatting {
@@ -652,6 +657,8 @@
     " Workaround broken colour highlighting in Haskell
     autocmd FileType haskell,rust setlocal nospell
 
+    " Switch on syntax highlighting as the last thing that should happen
+    syntax on
 " }
 
 " Key (re)Mappings {
@@ -862,6 +869,7 @@
     " Grepper {
        let g:grepper = {}
        let g:grepper.tools = ['grep', 'git', 'rg']
+
        " Search for the current word
        nnoremap <Leader>* :Grepper -cword -noprompt<CR>
 
@@ -879,8 +887,24 @@
        " Open Grepper-prompt for a particular grep-alike tool
        nnoremap <Leader>g :Grepper -tool git<CR>
        nnoremap <Leader>G :Grepper -tool rg<CR>
-    "
+
+       " After searching for text, press this mapping to do a project wide find and
+       " replace. It's similar to <leader>r except this one applies to all matches
+       " across all files instead of just the current file.
+       nnoremap <Leader>R
+             \ :let @s='\<'.expand('<cword>').'\>'<CR>
+             \ :Grepper -cword -noprompt<CR>
+             \ :cfdo %s/<C-r>s//g \| update
+             \<Left><Left><Left><Left><Left><Left><Left><Left><Left><Left><Left>
+
+       " The same as above except it works with a visual selection.
+       xmap <Leader>R
+             \ "sy
+             \ gvgr
+             \ :cfdo %s/<C-r>s//g \| update
+             \<Left><Left><Left><Left><Left><Left><Left><Left><Left><Left><Left>
     " }
+    "
     " GoLang {
         if count(g:spf13_bundle_groups, 'go')
             let g:go_highlight_functions = 1
@@ -1070,9 +1094,6 @@
         endif
     " }
 
-    " fzf {
-        nnoremap <C-p> :<C-u>FZF<CR>
-    " }
 
     "
     " ctrlp {
@@ -1824,7 +1845,20 @@ nmap _$ :TrimWhitespace<CR>
 
 
 " Set the status line the way i like it
-set stl=%f\ %m\ %r%{CustomFugitiveStatusLine()}\ Line:%l/%L[%p%%]\ Col:%v\ Buf:#%n\ [%b][0x%B]
+" set stl=%f\ %m\ %r%{CustomFugitiveStatusLine()}\ Line:%l/%L[%p%%]\ Col:%v\ Buf:#%n\ [%b][0x%B]
+function! s:statusline_expr()
+  let mod = "%{&modified ? '[+] ' : !&modifiable ? '[x] ' : ''}"
+  let ro  = "%{&readonly ? '[RO] ' : ''}"
+  let ft  = "%{len(&filetype) ? '['.&filetype.'] ' : ''}"
+  let fug = "%{exists('g:loaded_fugitive') ? fugitive#statusline() : ''}"
+  let sep = ' %= '
+  let pos = ' %-12(%l : %c%V%) '
+  let pct = ' %P'
+
+  return '[%n] %f %<'.mod.ro.ft.fug.sep.pos.'%*'.pct
+endfunction
+
+let &statusline = s:statusline_expr()
 
 " tell VIM to always put a status line in, even if there is only one window
 set laststatus=2
@@ -1841,8 +1875,6 @@ set ruler
 " Show the current mode
 set showmode
 
-" Switch on syntax highlighting.
-syntax on
 
 
 
@@ -1919,7 +1951,8 @@ nmap <silent> ,wa :call BWipeoutAll()<cr>
 " Toggle paste mode
 nmap <silent> ,p :set invpaste<CR>:set paste?<CR>
 
-
+" Cycle through splits.
+nnoremap <S-Tab> <C-w>w
 
 " put the vim directives for my file editing settings in
 nmap <silent> ,vi ovim:set ts=2 sts=2 sw=2:<CR>vim600:fdm=marker fdl=1 fdc=0:<ESC>
@@ -1934,10 +1967,56 @@ nmap <silent> ,qq :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . 
 map <S-Insert> <MiddleMouse>
 map! <S-Insert> <MiddleMouse>
 
+" Press * to search for the term under the cursor or a visual selection and
+" then press a key below to replace all instances of it in the current file.
+nnoremap <Leader>r :%s///g<Left><Left>
+nnoremap <Leader>rc :%s///gc<Left><Left><Left>
+
+" The same as above but instead of acting on the whole file it will be
+" restricted to the previously visually selected range. You can do that by
+" pressing *, visually selecting the range you want it to apply to and then
+" press a key below to replace all instances of it in the current selection.
+xnoremap <Leader>r :s///g<Left><Left>
+xnoremap <Leader>rc :s///gc<Left><Left><Left>
+
+" Type a replacement term and press . to repeat the replacement again. Useful
+" for replacing a few instances of the term (comparable to multiple cursors).
+nnoremap <silent> s* :let @/='\<'.expand('<cword>').'\>'<CR>cgn
+xnoremap <silent> s* "sy:let @/=@s<CR>cgn
+
+" Clear search highlights.
+" map <Leader><Space> :let @/=''<CR>
+
+" Toggle quickfix window.
+function! QuickFix_toggle()
+    for i in range(1, winnr('$'))
+        let bnum = winbufnr(i)
+        if getbufvar(bnum, '&buftype') == 'quickfix'
+            cclose
+            return
+        endif
+    endfor
+
+    copen
+endfunction
+nnoremap <silent> <Leader>c :call QuickFix_toggle()<CR>
+
+" Prevent x from overriding what's in the clipboard.
+noremap x "_x
+noremap X "_x
+
+" Prevent selecting and pasting from overwriting what you originally copied.
+xnoremap p pgvy
+
+" Keep cursor at the bottom of the visual selection after you yank it.
+vmap y ygv<Esc>
+
 " set text wrapping toggles
 "nmap <silent> <c-/> <Plug>WimwikiIndex
 nmap <silent> ,ww :set invwrap<cr>
 nmap <silent> ,wW :windo set invwrap<cr>
+
+runtime! macros/matchit.vim
 
 " allow command line editing like emacs
 cnoremap <C-A>      <Home>
@@ -2282,6 +2361,57 @@ com! FormatJSON %!python -m json.tool
 com! FormatXML :%!python -c "import xml.dom.minidom, sys; print(xml.dom.minidom.parse(sys.stdin).toprettyxml())"
 nnoremap = :FormatXML<Cr>
 
+" -----------------------------------------------------------------------------
+" Basic autocommands
+" -----------------------------------------------------------------------------
+
+" Reduce delay when switching between modes.
+augroup NoInsertKeycodes
+  autocmd!
+  autocmd InsertEnter * set ttimeoutlen=0
+  autocmd InsertLeave * set ttimeoutlen=50
+augroup END
+
+" Auto-resize splits when Vim gets resized.
+autocmd VimResized * wincmd =
+
+" Update a buffer's contents on focus if it changed outside of Vim.
+au FocusGained,BufEnter * :checktime
+
+" Unset paste on InsertLeave.
+autocmd InsertLeave * silent! set nopaste
+
+" Make sure all types of requirements.txt files get syntax highlighting.
+autocmd BufNewFile,BufRead requirements*.txt set syntax=python
+
+" Ensure tabs don't get converted to spaces in Makefiles.
+autocmd FileType make setlocal noexpandtab
+
+" ----------------------------------------------------------------------------
+" Basic commands
+" ----------------------------------------------------------------------------
+
+" Add all TODO items to the quickfix list relative to where you opened Vim.
+function! s:todo() abort
+  let entries = []
+  for cmd in ['git grep -niIw -e TODO -e FIXME 2> /dev/null',
+            \ 'grep -rniIw -e TODO -e FIXME . 2> /dev/null']
+    let lines = split(system(cmd), '\n')
+    if v:shell_error != 0 | continue | endif
+    for line in lines
+      let [fname, lno, text] = matchlist(line, '^\([^:]*\):\([^:]*\):\(.*\)')[1:3]
+      call add(entries, { 'filename': fname, 'lnum': lno, 'text': text })
+    endfor
+    break
+  endfor
+
+  if !empty(entries)
+    call setqflist(entries)
+    copen
+  endif
+endfunction
+
+command! Todo call s:todo()
 
 "-----------------------------------------------------------------------------
 " Auto commands
@@ -2302,6 +2432,67 @@ augroup Binary
   au BufWritePost *.bin set nomod | endif
 augroup END
 
+" -----------------------------------------------------------------------------
+" Plugin settings, mappings and autocommands
+" -----------------------------------------------------------------------------
+
+" .............................................................................
+" junegunn/fzf.vim
+" .............................................................................
+
+let $FZF_DEFAULT_OPTS = '--bind ctrl-a:select-all'
+
+" fzf {
+" nnoremap <C-p> :<C-u>FZF<CR>
+" }
+" Launch fzf with CTRL+P.
+nnoremap <silent> <C-p> :FZF -m<CR>
+
+" Map a few common things to do with FZF.
+nnoremap <silent> <Leader><Enter> :Buffers<CR>
+nnoremap <silent> <Leader>l :Lines<CR>
+
+" Allow passing optional flags into the Rg command.
+"   Example: :Rg myterm -g '*.md'
+command! -bang -nargs=* Rg call fzf#vim#grep("rg --column --line-number --no-heading --color=always --smart-case " . <q-args>, 1, <bang>0)
+
+
+" .............................................................................
+" ntpeters/vim-better-whitespace
+" .............................................................................
+
+let g:strip_whitespace_confirm=0
+let g:strip_whitespace_on_save=1
+
+" .............................................................................
+" Konfekt/FastFold
+" .............................................................................
+
+let g:fastfold_savehook=0
+let g:fastfold_fold_command_suffixes=[]
+
+" .............................................................................
+" junegunn/limelight.vim
+" .............................................................................
+
+let g:limelight_conceal_ctermfg=244
+
+" .............................................................................
+" plasticboy/vim-markdown
+" .............................................................................
+
+autocmd FileType markdown let b:sleuth_automatic=0
+autocmd FileType markdown set conceallevel=0
+autocmd FileType markdown normal zR
+
+let g:vim_markdown_frontmatter=1
+
+" .............................................................................
+" iamcco/markdown-preview.nvim
+" .............................................................................
+
+let g:mkdp_refresh_slow=1
+let g:mkdp_markdown_css='/home/mikekim/.local/lib/github-markdown-css/github-markdown.css'
 
 "-----------------------------------------------------------------------------
 " Local system overrides
