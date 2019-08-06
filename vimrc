@@ -1245,8 +1245,8 @@
         if count(g:spf13_bundle_groups, 'deoplete')
 
             let g:deoplete#enable_at_startup = 1
-            let g:python3_host_prog = 'python3'
-            let g:python_host_prog = 'python'
+            let g:python3_host_prog = '/usr/bin/python3'
+            let g:python_host_prog = '/usr/bin/python'
             let g:acp_enableAtStartup = 0
             let g:deoplete#enable_at_startup = 1
             let g:deoplete#enable_smart_case = 1
