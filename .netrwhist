@@ -1,0 +1,11 @@
+let g:netrw_dirhistmax  =10
+let g:netrw_dirhist_cnt =9
+let g:netrw_dirhist_1='/home/mikekim/.vim/pack'
+let g:netrw_dirhist_2='/home/mikekim/.vim'
+let g:netrw_dirhist_3='/home/mikekim'
+let g:netrw_dirhist_4='/mnt/d/mbst/juliet-pendo-service'
+let g:netrw_dirhist_5='/home/mikekim/.config/powershell'
+let g:netrw_dirhist_6='/home/mikekim'
+let g:netrw_dirhist_7='/mnt/c/Users/mike.kim/OneDrive - Solarwinds/H/WindowsPowerShell'
+let g:netrw_dirhist_8='/mnt/c/Users/mike.kim/OneDrive - Solarwinds/H'
+let g:netrw_dirhist_9='/mnt/c/Users/mike.kim/OneDrive - Solarwinds/H/WindowsPowerShell'

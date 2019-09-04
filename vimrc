@@ -227,13 +227,17 @@
         call minpac#add('iamcco/markdown-preview.nvim', {'on_ft': ['markdown', 'pandoc.markdown', 'rmd'],
               \ 'build': 'cd app & yarn install' })
     " }
+    "
+    " Vinegar {
+        call minpac#add('tpope/vim-vinegar')
+    " }
+
 
     " General {
         if count(g:spf13_bundle_groups, 'ctrlp')
             call minpac#add('ctrlpvim/ctrlp.vim')
             call minpac#add('tacahiroy/ctrlp-funky')
         endif
-
         if count(g:spf13_bundle_groups, 'general')
             call minpac#add('scrooloose/nerdtree')
             call minpac#add('altercation/vim-colors-solarized')
@@ -959,7 +963,7 @@
 
     " Misc {
         if isdirectory(expand("~/.vim/pack/minpac/start/nerdtree"))
-            let g:NERDShutUp=1
+            " let g:NERDShutUp=1
         endif
         if isdirectory(expand("~/.vim/pack/minpac/start/matchit.zip"))
             let b:match_ignorecase = 1
@@ -2493,6 +2497,35 @@ let g:vim_markdown_frontmatter=1
 
 let g:mkdp_refresh_slow=1
 let g:mkdp_markdown_css='/home/mikekim/.local/lib/github-markdown-css/github-markdown.css'
+
+" netrw {
+let g:netrw_banner = 0
+let g:netrw_liststyle = 3
+let g:netrw_browse_split = 4
+let g:netrw_altv = 1
+let g:netrw_winsize = 25
+let g:netrw_list_hide = '\(^\|\s\s\)\zs\.\S\+' " gh to toggle dotfile hiding
+augroup ProjectDrawer
+  autocmd!
+  autocmd VimEnter * :Vexplore
+augroup END
+" }
+"
+" gutentags {
+let g:gutentags_project_root = ['.git', '.svn', '.root', '.hg', '.project']
+let g:gutentags_ctags_tagfile = '.tags'
+let s:vim_tags = expand('~/.cache/tags')
+let g:gutentags_cache_dir = s:vim_tags
+let g:gutentags_ctags_extra_args = ['--fields=+niazS', '--extra=+q', '--c++-kinds=+px', '--c-kinds=+px']
+let g:gutentags_trace = 0
+let g:gutentags_file_list_command = {
+      \  'markers': {
+      \  '.git': 'git ls-files',
+      \  '.hg': 'hg files',
+      \  }
+      \  }
+
+" }
 
 "-----------------------------------------------------------------------------
 " Local system overrides
